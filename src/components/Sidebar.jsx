@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { SiShopware } from "react-icons/si";
 import { MdOutlineCancel } from "react-icons/md";
@@ -8,14 +8,21 @@ import {
   AiOutlineShoppingCart,
   AiOutlineAreaChart,
   AiOutlineBarChart,
-  AiOutlineStock,
+  AiOutlineStock, 
 } from "react-icons/ai";
+import MessageIcon from '@mui/icons-material/Message';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import LocalMallIcon from '@mui/icons-material/LocalMall';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import CategoryIcon from '@mui/icons-material/Category';
 
 import { links } from "../data/dummy";
 import { useStateContext } from "../contexts/ContextProvider";
 import "./Sidebar.css";
 
 const Sidebar = () => {
+  const [tabActive, setTabActive] = useState("thongke")
   const { currentColor, activeMenu, setActiveMenu, screenSize } =
     useStateContext();
 
@@ -24,7 +31,7 @@ const Sidebar = () => {
       setActiveMenu(false);
     }
   };
-
+  console.log('ffffffffffffffffffffffffffffff', sessionStorage.getItem("role"))
   const activeLink =
     "flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg  text-white  text-md m-2";
   const normalLink =
@@ -55,8 +62,8 @@ const Sidebar = () => {
           </div>
 
           <div className="mt-10">
-            <p className="text-grat-400 dark:test-gray-400 m-3 mt-4 uppercase">
-              Quản lý
+            <p style={{textAlign: 'center', fontSize: 20, fontWeight: 2000}}>
+              QUẢN LÝ
             </p>
             <ul>
               {JSON.parse(localStorage.getItem("role")) === "Shipper" && (
@@ -72,51 +79,86 @@ const Sidebar = () => {
 
               {JSON.parse(localStorage.getItem("role")) === "Admin" && (
                 <div>
-                  <Link to="/" style={{ textDecoration: "none" }}>
+                  <div className="status__content" style={{backgroundColor: tabActive === 'thongke' ? '#efd8f0' : null}} 
+                  onClick={() => setTabActive('thongke')}>
+                  <Link to="/" >
                     <li>
-                      <AiOutlineCalendar className="icon" />
+                      <BarChartIcon className="icon" />
                       <span>Thống kê</span>
                     </li>
                   </Link>
+                  </div>
+
+                  <div className="status__content" style={{backgroundColor: tabActive === 'donhang' ? '#efd8f0' : null}} 
+                  onClick={() => setTabActive('donhang')}>
                   <Link to="/orders" style={{ textDecoration: "none" }}>
                     <li>
-                      <AiOutlineShoppingCart className="icon" />
+                      <LocalMallIcon className="icon" />
                       <span>Đơn hàng</span>
                     </li>
                   </Link>
+                  </div>
+
+                  <div className="status__content" style={{backgroundColor: tabActive === 'nguoidung' ? '#efd8f0' : null}} 
+                  onClick={() => setTabActive('nguoidung')}>
                   <Link to="/employees" style={{ textDecoration: "none" }}>
                     <li>
-                      <AiOutlineCalendar className="icon" />
+                      <AccountBoxIcon className="icon" />
                       <span>Người dùng</span>
                     </li>
                   </Link>
+                  </div>
 
+                  <div className="status__content" style={{backgroundColor: tabActive === 'khachhang' ? '#efd8f0' : null}} 
+                  onClick={() => setTabActive('khachhang')}>
                   <Link to="/customers" style={{ textDecoration: "none" }}>
                     <li>
-                      <AiOutlineCalendar className="icon" />
+                      <AccountBoxIcon className="icon" />
                       <span>Khách hàng</span>
                     </li>
                   </Link>
+                  </div>
 
+                  <div className="status__content" style={{backgroundColor: tabActive === 'sanpham' ? '#efd8f0' : null}} 
+                  onClick={() => setTabActive('sanpham')}>
                   <Link to="/products" style={{ textDecoration: "none" }}>
                     <li>
-                      <AiOutlineShoppingCart className="icon" />
+                      <ShoppingCartIcon className="icon" />
                       <span>Sản phẩm</span>
                     </li>
                   </Link>
+                  </div>
 
+                  <div className="status__content" style={{backgroundColor: tabActive === 'thuonghieu' ? '#efd8f0' : null}} 
+                  onClick={() => setTabActive('thuonghieu')}>
                   <Link to="/brands" style={{ textDecoration: "none" }}>
                     <li>
-                      <AiOutlineShoppingCart className="icon" />
-                      <span>Nhãn hiệu</span>
+                      <CategoryIcon className="icon" />
+                      <span>Thương hiệu</span>
                     </li>
                   </Link>
+                  </div>
+
+                  <div className="status__content" style={{backgroundColor: tabActive === 'loaisanpham' ? '#efd8f0' : null}} 
+                  onClick={() => setTabActive('loaisanpham')}>
                   <Link to="/producttypes" style={{ textDecoration: "none" }}>
                     <li>
-                      <AiOutlineShoppingCart className="icon" />
+                      <CategoryIcon className="icon" />
                       <span>Loại sản phẩm</span>
                     </li>
                   </Link>
+                  </div>
+
+                  <div className="status__content" style={{backgroundColor: tabActive === 'tinnhan' ? '#efd8f0' : null}} 
+                  onClick={() => setTabActive('tinnhan')}>
+                  <Link to="/chatbox" style={{ textDecoration: "none" }}>
+                    <li>
+                      <MessageIcon className="icon" />
+                      <span>Tin nhắn</span>
+                    </li>
+                  </Link>
+
+                  </div>
                 </div>
               )}
             </ul>

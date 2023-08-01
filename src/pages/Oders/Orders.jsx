@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from 'axios'
 import ModalAdd from "./ModalAdd";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -20,6 +21,8 @@ import { ordersData } from "../../data/dummy";
 import { Header } from "../../components";
 import { useStateContext } from "../../contexts/ContextProvider";
 import { OrderService } from "../../services/order.service";
+import { InputLabel, MenuItem, Select, FormControl } from '@mui/material'
+import { baseURL } from "../../data/baseURL";
 
 const Orders = () => {
   document.title = "Quản lý đơn hàng";
@@ -27,48 +30,52 @@ const Orders = () => {
   const { currentColor } = useStateContext();
   const [openModal, setOpenModal] = useState(false);
   const [data, setData] = useState([]);
+
+  //Order Status
+  const [orderStatus, setOrderStatus] = useState('');
+  const [filterStatusData, setFilterStatusData] = useState([]);
   useEffect(() => {
     fetchData();
   }, []);
   const fetchData = async () => {
     await OrderService.getAllOrder().then((response) => {
-      setData(
-        response.results.data.map((data) => {
-          let st = "";
-          if (data.status === "approved") {
-            st = "Đã xác nhận";
-          } else if (data.status === "ready_to_ship") {
-            st = "Đang chờ giao";
-          } else if (data.status === "transporting") {
-            st = "Đang giao hàng";
-          } else if (data.status === "completed") {
-            st = "Hoàn tất";
-          } else if (data.status === "cancelled") {
-            st = "Đã hủy đơn";
-          } else {
-            st = "Chưa xác nhận";
-          }
-          return { ...data, status: st };
-        })
-        // response.results.data
-
-        // ...response.results.data,
-
-        // status:
-        //   response.results.data.map(data.status) === "approved"
-        //     ? "Đã xác nhận"
-        //     : response.results.data.map(data.status) === "ready_to_ship"
-        //     ? "Đang chờ giao"
-        //     : response.results.data.map(data.status) === "transporting"
-        //     ? "Đang giao hàng"
-        //     : response.results.data.map(data.status) === "completed"
-        //     ? "Hoàn tất"
-        //     : "Chưa xác nhận",
-      );
-
+      
       console.log(response.results.data);
     });
   };
+
+  //Order Status
+  useEffect(() => {
+    
+    axios.get(`${baseURL}/api/v1/order?status=${orderStatus}&limit=${100}`)
+        .then((res) => {
+            //setFilterStatusData(res.data.results.data);
+            setFilterStatusData(
+              res.data.results.data.map((data) => {
+                let st = "";
+                if (data.status === "approved") {
+                  st = "Đã xác nhận";
+                } else if (data.status === "ready_to_ship") {
+                  st = "Đang chờ giao";
+                } else if (data.status === "transporting") {
+                  st = "Đang giao hàng";
+                } else if (data.status === "completed") {
+                  st = "Hoàn tất";
+                } else if (data.status === "cancelled") {
+                  st = "Đã hủy đơn";
+                } else {
+                  st = "Chờ xác nhận";
+                }
+                return { ...data, status: st };
+              })
+            
+            );
+      
+           
+        })
+        .catch((err) => console.log(err));
+}, [orderStatus])
+
 
   const editOrderGrid = (props) => {
     return (
@@ -156,6 +163,24 @@ const Orders = () => {
       <div className=" md:m-10 p-1 md:p-10 bg-white rounded-3xl">
         <div className="flex justify-between items-center mb-6">
           <Header title="Quản lý đơn hàng" category="Phân hệ Admin" />
+          <FormControl style={{width: 300}}>
+                    <InputLabel id="demo-simple-select-label">Lọc theo trạng thái</InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      label="Type payment"
+                       value={orderStatus}
+                       onChange={(e) => setOrderStatus(e.target.value)}
+                    >
+                      <MenuItem value='wait_for_confirmation'>Chờ xác nhận</MenuItem>
+                      <MenuItem value='approved'>Đã xác nhận</MenuItem>
+                      <MenuItem value='ready_to_ship'>Chờ giao</MenuItem>
+                      <MenuItem value='transporting'>Đang vận chuyển</MenuItem>
+                      <MenuItem value='completed'>Hoàn tất</MenuItem>
+                      <MenuItem value='cancelled'>Đã hủy</MenuItem>
+
+                    </Select>
+                  </FormControl>
           {/* <Link
             to="/orders/new"
             style={{
@@ -170,7 +195,7 @@ const Orders = () => {
         <div id="grid-data">
           <GridComponent
             id="gridcomp"
-            dataSource={data}
+            dataSource={filterStatusData}
             allowPaging
             allowSorting
             pageSettings={{ pageSize: 10 }}

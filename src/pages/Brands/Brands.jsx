@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import ModalAdd from "./ModalAdd";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -21,6 +22,8 @@ import { Header } from "../../components";
 import { useStateContext } from "../../contexts/ContextProvider";
 import { BrandService } from "../../services/brand.service";
 const Brands = () => {
+  const [openNotify, setOpenNotify] = React.useState(false);
+  const [brandIdDelete, setBrandIdDelete] = useState()
   document.title = "Quản lý nhãn hiệu";
   const navigate = useNavigate();
   const { currentColor } = useStateContext();
@@ -62,12 +65,8 @@ const Brands = () => {
           style={{ background: "#FF3333" }}
           className="text-white font-bold py-2 px-6 capitalize rounded-full text-sm hover:drop-shadow-lg"
           onClick={() => {
-            const messageBox = window.confirm(
-              "Bạn có muốn xóa nhãn hiệu " + props.name + "?"
-            );
-            if (messageBox) {
-              deleteOnClick(props.uid);
-            }
+            setOpenNotify(true)
+            setBrandIdDelete(props.uid)
           }}
         >
           Xóa
@@ -112,6 +111,32 @@ const Brands = () => {
 
   return (
     <>
+    <Dialog
+                open={openNotify}
+                onClose={() => setOpenNotify(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                style={{ width: 1800 }}
+            // TransitionComponent={Transition}
+            >
+                <DialogTitle >
+                    {"Thông báo"}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Xác nhận xóa?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <button style={{backgroundColor: 'black', borderRadius: 5, color: "white", width: 100, height: 30}} onClick={() => setOpenNotify(false)}>Hủy</button>
+                    <button style={{backgroundColor: 'black', borderRadius: 5, color: "white", width: 100, height: 30}} onClick={() => {
+                        setOpenNotify(false)
+                        deleteOnClick(brandIdDelete)
+                    }}>
+                        Đồng ý
+                    </button>
+                </DialogActions>
+            </Dialog>
       <div id="modal-category">
         <ModalAdd
           open={openModal}

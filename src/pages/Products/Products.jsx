@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
+import axios from 'axios'
 import ModalAdd from "./ModalAdd";
+import { InputLabel, MenuItem, Select, FormControl, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material'
+import { baseURL } from "../../data/baseURL";
 import { Link, useNavigate } from "react-router-dom";
 import {
   GridComponent,
@@ -16,7 +19,7 @@ import {
   Inject,
 } from "@syncfusion/ej2-react-grids";
 
-import { productData } from "../../data/dummy";
+import { productData, producttypeData } from "../../data/dummy";
 import { Header } from "../../components";
 import { useStateContext } from "../../contexts/ContextProvider";
 import { ProductService } from "../../services/product.service";
@@ -27,20 +30,63 @@ const Products = () => {
   const { currentColor } = useStateContext();
   const [openModal, setOpenModal] = useState(false);
   const [data, setData] = useState([]);
+  
+  const [filterMode, setFilterMode] = useState(false);
+  const [filterBrand, setFilterBrand] = useState('')
+  const [filterProductType, setFilterProductType] = useState('')
+  const [filterProductData, setFilterProductData] = useState([])
+
+  const [openNotify, setOpenNotify] = React.useState(false);
+  const [productIdDelete, setProductIdDelete] = useState()
+  
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
+  // const fetchData = async () => {
+  //   await ProductService.getAllProduct().then((response) => {
+  //     // setData();
+  //     console.log("t", response);
+  //   });
+  // };
   useEffect(() => {
-    fetchData();
-  }, []);
-  const fetchData = async () => {
-    await ProductService.getAllProduct().then((response) => {
-      setData(response.results.data);
-      console.log(response.results.data);
-    });
-  };
+    var myHeaders = new Headers();
+    myHeaders.append("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJMb25nIEx1b25nIEx1b25nIiwidWlkIjoiMDFHSFRNN0NGMks3UzlaNVM5NVlIUlA2SFAiLCJpYXQiOjE2Njg2ODgyMjYyNTYsImV4cCI6MTY2ODk0NzQyNjI1Nn0.2zz4BRcFMdB2uA5LQHy0g-CdzQTLLOa6v88ZmxEyUmw");
+
+    var requestOptions = {
+      method: 'GET',
+      headers: myHeaders,
+      redirect: 'follow'
+    };
+
+    fetch(`http://localhost:3000/api/v1/product?limit=${100}`, requestOptions)
+      .then(response => response.text())
+      .then(result => {
+
+        const t = JSON.parse(result)
+        
+        setData(t.results.data);
+        setFilterProductData(t.results.data);
+        console.log('===================', t.results.data)
+      })
+      .catch(error => console.log('error', error));
+  }, [])
+
+  //Filter Product
+  useEffect(() => {
+    axios.get(`${baseURL}/api/v1/product?productType=${filterProductType}&brand=${filterBrand}&limit=${100}`)
+      .then((res) => {
+        console.log('dksjkdjskdjksjdksjkds',res.data.results.data)
+        setFilterProductData(res.data.results.data)
+    
+   })
+      .catch((err) => console.log(err))
+
+     //setFilterProductData()
+   },  [filterMode])
 
   const deleteOnClick = async (id) => {
     await ProductService.deleteProduct(id).then(
       (response) => {
-        console.log(response);
         window.location.reload();
       },
       (error) => {
@@ -48,7 +94,13 @@ const Products = () => {
       }
     );
   };
+  const image = (props) => {
+    return (
+      <img src={props.image[0]} alt="" style={{width: 50, height: 50}}/>
+    )
+  }
   const editProductGrid = (props) => {
+    sessionStorage.setItem('productID', props.uid)
     return (
       <div className="flex justify-start items-center gap-2">
         <Link
@@ -58,31 +110,32 @@ const Products = () => {
         >
           Sửa
         </Link>
+        
         <button
           type="button"
           style={{ background: "#FF3333" }}
           className="text-white font-bold py-2 px-6 capitalize rounded-full text-sm hover:drop-shadow-lg"
           onClick={() => {
-            const messageBox = window.confirm(
-              "Bạn có muốn xóa sản phẩm " + props.name + "?"
-            );
-            if (messageBox) {
-              deleteOnClick(props.uid);
-            }
+            setOpenNotify(true)
+            setProductIdDelete(props.uid)
           }}
         >
           Xóa
         </button>
+
       </div>
+      
     );
   };
   const productGrid = [
     { type: "checkbox", width: "50" },
     {
-      headerText: "ID",
-      field: "uid",
+      headerText: "Sản phẩm",
+      field: "image",
+      template: image,
       textAlign: "Center",
       width: "100",
+      
     },
     {
       headerText: "Mã sản phẩm",
@@ -129,6 +182,33 @@ const Products = () => {
   return (
     <>
       <div id="modal-category">
+      <Dialog
+                open={openNotify}
+                onClose={() => setOpenNotify(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                style={{ width: 1800 }}
+            // TransitionComponent={Transition}
+            >
+                <DialogTitle >
+                    {"Thông báo"}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Xác nhận xóa?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <button style={{backgroundColor: 'black', borderRadius: 5, color: "white", width: 100, height: 30}} onClick={() => setOpenNotify(false)}>Hủy</button>
+                    <button style={{backgroundColor: 'black', borderRadius: 5, color: "white", width: 100, height: 30}} onClick={() => {
+                        setOpenNotify(false)
+                        deleteOnClick(productIdDelete)
+                    }}>
+                        Đồng ý
+                    </button>
+                </DialogActions>
+            </Dialog>
+
         <ModalAdd
           open={openModal}
           onClose={() => {
@@ -142,8 +222,8 @@ const Products = () => {
 
       <div className=" md:m-10 p-1 md:p-10 bg-white rounded-3xl">
         <div className="flex justify-between items-center mb-6">
+          <div>
           <Header title="Quản lý sản phẩm" category="Phân hệ Admin" />
-
           <Link
             to="/products/new"
             style={{
@@ -152,8 +232,51 @@ const Products = () => {
             }}
             className="font-semibold hover:drop-shadow rounded-full px-6 py-3"
           >
-            <span>Thêm Sản Phẩm</span>
+            <span style={{textAlign: 'center'}}>Thêm Sản Phẩm</span>
           </Link>
+          </div>
+
+          <div style={{display: "flex", alignItems: "center"}}>
+          <FormControl style={{width: 200, marginLeft: 150}}>
+                    <InputLabel id="demo-simple-select-label"> Thương hiệu</InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      label="Type payment"
+                         value={filterBrand}
+                         onChange={(e) => setFilterBrand(e.target.value)}
+                    >
+                      <MenuItem value='Intel'>Intel</MenuItem>
+                      <MenuItem value='ASUS'>ASUS</MenuItem>
+                      <MenuItem value='Cooler Master'>Cooler Master</MenuItem>
+                      <MenuItem value='SamSung'>SamSung</MenuItem>
+                      <MenuItem value='Corsair'>Corsair</MenuItem>
+                      <MenuItem value='Gigabyte'>Gigabyte</MenuItem>
+                      <MenuItem value='AMD'>AMD</MenuItem>
+                      <MenuItem value='NZXT'>NZXT</MenuItem>
+                    </Select>
+                  </FormControl>
+
+                  <FormControl style={{width: 200}}>
+                    <InputLabel id="demo-simple-select-label">Loại</InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      label="Type payment"
+                         value={filterProductType}
+                         onChange={(e) => setFilterProductType(e.target.value)}
+                    >
+                      <MenuItem value='Main'>Main</MenuItem>
+                      <MenuItem value='VGA'>VGA</MenuItem>
+                      <MenuItem value='CPU'>CPU</MenuItem>
+                      <MenuItem value='RAM'>RAM</MenuItem>
+                      <MenuItem value='Cooler/Fann'>Fan</MenuItem>
+                      <MenuItem value='Case'>Case</MenuItem>
+
+                    </Select>
+                  </FormControl>
+                  <Button onClick={() => setFilterMode(!filterMode)}>Lọc</Button>
+                  </div>
 
           {/* <button
             type="button"
@@ -172,10 +295,11 @@ const Products = () => {
         <div id="grid-data">
           <GridComponent
             id="gridcomp"
-            dataSource={data}
+            dataSource={filterProductData}
             allowPaging
             allowSorting
             pageSettings={{ pageSize: 10 }}
+            
           >
             <ColumnsDirective>
               {productGrid.map((item, index) => (

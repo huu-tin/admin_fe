@@ -36,6 +36,8 @@ const Customers = () => {
   const handleClickError = () => {
     setOpen(!open);
   };
+  const [openNotify, setOpenNotify] = React.useState(false);
+  const [customerIdDelete, setCustomerIdDelete] = useState()
   //--------------------------------------------------------------
   document.title = "Quản lý khách hàng";
   const navigate = useNavigate();
@@ -49,6 +51,7 @@ const Customers = () => {
   const fetchData = async () => {
     await CustomerService.getAllCustomer().then((response) => {
       setData(response.results.data);
+      sessionStorage.setItem("userInfo", JSON.stringify(res.data.results.data.uid));
       console.log(response.results.data);
     });
   };
@@ -72,21 +75,15 @@ const Customers = () => {
           className="text-white font-bold py-2 px-6 capitalize rounded-full text-sm hover:drop-shadow-lg"
           to={`edit/${props.uid}`}
         >
-          Sửa
+          Xem
         </Link>
         <button
           type="button"
           style={{ background: "#FF3333" }}
           className="text-white font-bold py-2 px-6 capitalize rounded-full text-sm hover:drop-shadow-lg"
           onClick={() => {
-            const messageBox = window.confirm(
-              "Bạn có muốn xóa khách hàng " + props.username + "?"
-            );
-            if (messageBox) {
-              deleteOnClick(props.uid);
-              handleClickSuccess_xacnhandon();
-
-            }
+            setOpenNotify(true)
+            setCustomerIdDelete(props.uid)
           }}
         >
           Xóa
@@ -106,12 +103,12 @@ const Customers = () => {
 
     {
       field: "username",
-      headerText: "Username",
+      headerText: "Tên tài khoản",
       textAlign: "Center",
       width: "130",
     },
     {
-      field: "firstName",
+      field: "lastName",
       headerText: "Tên",
       textAlign: "Center",
       width: "100",
@@ -179,15 +176,41 @@ const Customers = () => {
   return (
     <>
       <div>
-      <Dialog open={open} onClose={handleClickSuccess_xacnhandon}>
-                                <Alert
+      <Dialog
+                open={openNotify}
+                onClose={() => setOpenNotify(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+                style={{ width: 1800 }}
+            // TransitionComponent={Transition}
+            >
+                <DialogTitle >
+                    {"Thông báo"}
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Xác nhận xóa?
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <button style={{backgroundColor: 'black', borderRadius: 5, color: "white", width: 100, height: 30}} onClick={() => setOpenNotify(false)}>Hủy</button>
+                    <button style={{backgroundColor: 'black', borderRadius: 5, color: "white", width: 100, height: 30}} onClick={() => {
+                        setOpenNotify(false)
+                        deleteOnClick(customerIdDelete)
+                    }}>
+                        Đồng ý
+                    </button>
+                </DialogActions>
+            </Dialog>
+        <Dialog open={open} onClose={handleClickSuccess_xacnhandon}>
+          <Alert
 
-                                //props go here
-                                >
-                                  <AlertTitle>Thông tin đơn hàng</AlertTitle>
-                                  Thực hiện thành công
-                                </Alert>
-                              </Dialog>
+          //props go here
+          >
+            <AlertTitle>Thông tin đơn hàng</AlertTitle>
+            Thực hiện thành công
+          </Alert>
+        </Dialog>
       </div>
       <div id="modal-category">
         <ModalAdd

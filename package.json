@@ -20,15 +20,18 @@
         "@syncfusion/ej2-react-schedule": "^19.4.50",
         "antd": "^4.24.3",
         "axios": "^1.1.3",
+        "firebase": "^10.0.0",
         "material-icons": "^1.12.2",
         "mdbreact": "4.27.0",
         "react": "^17.0.2",
         "react-bootstrap": "^2.6.0",
         "react-dom": "^17.0.2",
         "react-google-charts": "^4.0.0",
+        "react-hook-form": "^7.45.1",
         "react-icons": "^4.3.1",
         "react-router-dom": "^6.2.1",
-        "react-scripts": "5.0.0"
+        "react-scripts": "5.0.0",
+        "reactstrap": "^9.2.0"
     },
     "scripts": {
         "start": "react-scripts start",

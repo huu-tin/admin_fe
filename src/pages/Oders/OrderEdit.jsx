@@ -7,6 +7,7 @@ import { OrderService } from "../../services/order.service";
 import { EmployeeService } from "../../services/employee.service";
 import { useDataContext } from "../../contexts/DataProvider";
 import { Modal, Button } from "react-bootstrap";
+import './order.css'
 
 import { Alert, AlertTitle } from '@mui/material'
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
@@ -68,7 +69,7 @@ const OrderEdit = () => {
         });
 
         EmployeeService.getAllShipper().then((response) => {
-          console.log(response);
+          console.log(response.results);
           setShipperData(response.results);
         });
       });
@@ -130,8 +131,8 @@ const OrderEdit = () => {
     await OrderService.updateStatusOrderCancel(id, order3).then(
       (response) => {
         console.log(response);
-        // navigate("/orders");
         handleClickSuccess_xacnhandon();
+        navigate("/orders");
       },
       (error) => {
         handleClickError();
@@ -149,8 +150,8 @@ const OrderEdit = () => {
     await OrderService.updateStatusOrder(id, order1).then(
       (response) => {
         console.log(response);
-        // navigate("/orders");
         handleClickSuccess_xacnhandon();
+        navigate("/orders");
       },
       (error) => {
         handleClickError();
@@ -167,8 +168,8 @@ const OrderEdit = () => {
     await OrderService.updateStatusOrderReady(id, order2).then(
       (response) => {
         console.log(response);
-        // navigate("/orders");
         handleClickSuccess_xacnhandon();
+        navigate("/orders");
       },
       (error) => {
         // alert("Đơn hàng chưa được xác nhận hoặc chưa lựa chọn shipper!!!");
@@ -260,7 +261,7 @@ const OrderEdit = () => {
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-gray-700">
-                            <h1 className="font-bold mb-1">Mã khách hàng</h1>
+                            {/* <h1 className="font-bold mb-1">Mã khách hàng</h1>
                             <div className="mt-1">
                               <textarea
                                 id="customerId"
@@ -271,7 +272,7 @@ const OrderEdit = () => {
                                 placeholder="Mã khách hàng"
                                 defaultValue={data.customerId}
                               />
-                            </div>
+                            </div> */}
                             <h1 className="font-bold mb-1">Tên khách hàng</h1>
                             <div className="mt-1">
                               <textarea
@@ -289,62 +290,36 @@ const OrderEdit = () => {
                         <div>
                           <label className="block text-sm font-medium text-gray-700">
                             <div className="mt-1 pb-2 pt-1">
-                              <h1 className="font-bold mb-1">
-                                Chi tiết đơn hàng
+                              <h1 className="font-bold mb-1" style={{ fontSize: 20 }} >
+                                CHI TIẾT ĐƠN HÀNG
                               </h1>
 
                               {data.product &&
                                 data.product.map((item) => {
                                   return (
-                                    <div key={item._id}>
+                                    <div key={item._id} style={{ display: 'flex', flexDirection: 'row', marginBottom: 20 }}>
                                       <input value={item._id} type="hidden" />
-                                      <h1 className="font-bold mb-1">
-                                        Mã sản phẩm
-                                      </h1>
-                                      <textarea
-                                        id="productId"
-                                        name="productId"
-                                        rows={1}
-                                        className="mt-1 w-full border rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
-                                        placeholder="Mã sản phẩm"
-                                        defaultValue={item.productId}
-                                      />
+                                      <div >
+                                        <img
+                                          src={item.image}
+                                          style={{
+                                            width: 200,
+                                            height: 200
+                                          }}
+                                        />
+                                      </div>
+                                      <div className="product__info">
+                                        <p>Tên sản phẩm: {item.name}</p>
+                                        <p>Số lượng: {item.number}</p>
+                                        <p>Giá: {item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}đ</p>
+                                      </div>
 
-                                      <h1 className="font-bold mb-1">
-                                        Số lượng
-                                      </h1>
-                                      <textarea
-                                        id="number"
-                                        name="number"
-                                        rows={1}
-                                        className="mt-1 w-full border rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
-                                        placeholder="Số lượng"
-                                        defaultValue={item.number}
-                                      />
-                                      <h1 className="font-bold mb-1">
-                                        Gía tiền
-                                      </h1>
-                                      <textarea
-                                        id="price"
-                                        name="price"
-                                        rows={1}
-                                        className="mt-1 w-full border rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
-                                        placeholder="Gía tiền"
-                                        defaultValue={item.price}
-                                      />
                                     </div>
                                   );
                                 })}
-                              <h1 className="font-bold mb-1">Địa chỉ</h1>
-                              <h1 className="font-bold mb-1">Đường</h1>
-                              <textarea
-                                id="street"
-                                name="street"
-                                rows={1}
-                                className="mt-1 w-full border rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
-                                placeholder="Nhập đường"
-                                defaultValue={data.address?.street}
-                              />
+                              <h1 className="totalbill">Tổng đơn hàng: {data.totalAmount?.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}đ</h1>
+                              <h1 className="font-bold mb-1" style={{ fontSize: 20 }}>THÔNG TIN LIÊN LẠC</h1>
+
                               <h1 className="font-bold mb-1">Tỉnh/Thành phố</h1>
                               <textarea
                                 id="province"
@@ -363,7 +338,7 @@ const OrderEdit = () => {
                                 placeholder="Nhập quận/huyện"
                                 defaultValue={data.address?.district}
                               />
-                              <h1 className="font-bold mb-1">Phường</h1>
+                              <h1 className="font-bold mb-1">Phường/Xã</h1>
                               <textarea
                                 id="ward"
                                 name="ward"
@@ -372,7 +347,15 @@ const OrderEdit = () => {
                                 placeholder="Nhập phường"
                                 defaultValue={data.address?.ward}
                               />
-
+                              <h1 className="font-bold mb-1">Đường</h1>
+                              <textarea
+                                id="street"
+                                name="street"
+                                rows={1}
+                                className="mt-1 w-full border rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
+                                placeholder="Nhập đường"
+                                defaultValue={data.address?.street}
+                              />
                               <h1 className="font-bold mb-1">
                                 Phương thức thanh toán
                               </h1>
@@ -411,7 +394,7 @@ const OrderEdit = () => {
                                 placeholder="Nhập email"
                                 defaultValue={data.email}
                               />
-                              <h1 className="font-bold mb-1">Hóa đơn</h1>
+                              {/* <h1 className="font-bold mb-1">Hóa đơn</h1>
                               <h1 className="font-bold mb-1">Tổng giá</h1>
 
                               <textarea
@@ -430,31 +413,36 @@ const OrderEdit = () => {
                                 className="mt-1 w-full border rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
                                 placeholder="Đã được giảm"
                                 defaultValue={data.totalAmount?.discount}
-                              />
+                              /> */}
 
-                              <h1 className="font-bold mb-1">
-                                Vui lòng chọn shipper
-                              </h1>
-
-                              <select
-                                id="shipperId"
-                                name="shipperId"
-                                defaultValue={data.shipperId}
-                                className="mt-1 w-full border rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
-                              >
-                                {shipper.map((itemm) => {
-                                  return (
-                                    <option
-                                      key={itemm.uid}
-                                      selected={data.shipper === itemm.name}
-                                      value={itemm.uid}
-                                      style={{ fontSize: "24px" }}
-                                    >
-                                      {itemm.name}
-                                    </option>
-                                  );
-                                })}
-                              </select>
+                              {
+                                data.status === 'Đã xác nhận' &&
+                                <>
+                                
+                                <h1 className="font-bold mb-1">
+                                  Vui lòng chọn shipper
+                                </h1>
+                                  <select
+                                    id="shipperId"
+                                    name="shipperId"
+                                    defaultValue={data.shipperId}
+                                    className="mt-1 w-full border rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
+                                  >
+                                    {shipper.map((itemm) => {
+                                      return (
+                                        <option
+                                          key={itemm.uid}
+                                          selected={data.shipper === itemm.name}
+                                          value={itemm.uid}
+                                          style={{ fontSize: "24px" }}
+                                        >
+                                          {itemm.name}
+                                        </option>
+                                      );
+                                    })}
+                                  </select>
+                                </>
+                              }
 
                               {/* <h1 className="font-bold mb-1">Thực thu</h1>
                               <textarea
@@ -517,13 +505,12 @@ const OrderEdit = () => {
                           Quay lại
                         </Link>
                         <button
+                          style={{backgroundColor: data.status == 'Chưa xác nhận' ? '' : 'grey'}}
                           type="button"
                           disabled={
-                            data.status === "Đã xác nhận" ||
-                            data.status === "Đang chờ giao" ||
-                            data.status === "Đang giao hàng" ||
-                            data.status === "Đã hủy đơn" ||
-                            data.status === "Hoàn tất"
+                            data.status == 'Chưa xác nhận' ?
+                            false:
+                            true      
                           }
                           onClick={handleClickOpenNotify}
                           className="inline-flex justify-center rounded-md border border-transparent bg-red-500 py-3 px-8 text-sm font-medium text-white shadow-sm hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
@@ -533,12 +520,11 @@ const OrderEdit = () => {
                         </button>
                         <button
                           type="button"
+                          style={{backgroundColor: data.status == 'Chưa xác nhận' ? '' : 'grey'}}
                           disabled={
-                            data.status === "Đã xác nhận" ||
-                            data.status === "Đang chờ giao" ||
-                            data.status === "Đang giao hàng" ||
-                            data.status === "Đã hủy đơn" ||
-                            data.status === "Hoàn tất"
+                            data.status == 'Chưa xác nhận' ?
+                            false:
+                            true      
                           }
                           onClick={upApproved}
                           className="inline-flex justify-center rounded-md border border-transparent bg-sky-500 py-3 px-8 text-sm font-medium text-white shadow-sm hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
@@ -548,11 +534,11 @@ const OrderEdit = () => {
 
                         <button
                           type="button"
+                          style={{backgroundColor: data.status == 'Đã xác nhận' ? '' : 'grey'}}
                           disabled={
-                            data.status === "Đang chờ giao" ||
-                            data.status === "Đang giao hàng" ||
-                            data.status === "Đã hủy đơn" ||
-                            data.status === "Hoàn tất"
+                            data.status == 'Đã xác nhận' ?
+                            false:
+                            true      
                           }
                           className="inline-flex justify-center rounded-md border border-transparent bg-sky-500 py-3 px-8 text-sm font-medium text-white shadow-sm hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                           onClick={readyToShip}
@@ -560,13 +546,13 @@ const OrderEdit = () => {
                           Giao hàng
                         </button>
 
-                        <button
+                        {/* <button
                           type="button"
                           className="inline-flex justify-center rounded-md border border-transparent bg-sky-500 py-3 px-8 text-sm font-medium text-white shadow-sm hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                           onClick={onSave}
                         >
                           Lưu thông tin
-                        </button>
+                        </button> */}
                       </div>
                       <div>
                         {/* <Dialog open={open} onClose={handleClickSuccess_luuthongtin}>
@@ -590,7 +576,7 @@ const OrderEdit = () => {
                                   Thực hiện thành công
                                 </Alert>
                               </Dialog>
-                              
+
                               {/* <Dialog open={open} onClose={handleClickError}>
                                 <Alert
 

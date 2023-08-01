@@ -1,121 +1,143 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { Navigate, useNavigate } from "react-router-dom";
 import "./Login.css";
 import ReactDOM from "react-dom";
-
+import { Container, Row, Col } from 'react-bootstrap'
 import { EmployeeService } from "../../services/employee.service";
-
-import { Form, Icon, Input, Button, Checkbox, message } from "antd";
-
+//import { Form, Icon, Input, Button, Checkbox, message } from "antd";
+import { useForm } from 'react-hook-form'
+import { Button, Dialog, Alert, AlertTitle } from '@mui/material'
+import { baseURL } from "../../data/baseURL";
 const Login = () => {
-  document.title = "Đăng nhập"; 
+
+  document.title = "Đăng nhập";
   const navigate = useNavigate();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const FormHeader = (props) => <h2 id="headerTitle">{props.title}</h2>;
 
-  const Form = ({ handleLogin }) => (
-    <form enctype="multipart/form-data">
-      <div>
-        <FormInput
-          description="Tài khoản"
-          placeholder="Nhập tài khoản của bạn"
-          type="text"
-          id="id"
-          name="username"
-          value={username}
-          setValue={setUsername}
-        />
-        <FormInput
-          description="Mật khẩu"
-          placeholder="Nhập mật khẩu của bạn"
-          type="password"
-          id="password"
-          name="password"
-          value={password}
-          setValue={setPassword}
-        />
-        <FormButton handleLogin={handleLogin} title="Đăng nhập" />
-      </div>
-    </form>
-  );
+  const [open, setOpen] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm();
 
-  const FormButton = (props) => (
-    <div id="button" class="row">
-      <button onClick={props.handleLogin}>{props.title}</button>
-    </div>
-  );
-
-  const FormInput = (props) => (
-    <div class="row">
-      <label>{props.description}</label>
-      <input
-        value={props.value}
-        onChange={(e) => props.setValue(e.target.value)}
-        type={props.type}
-        placeholder={props.placeholder}
-      />
-    </div>
-  );
-
-  const OtherMethods = (props) => (
-    <div id="alternativeLogin">
-      {/* <label>Or sign in with:</label> */}
-      <div id="iconGroup">
-        {/* <Facebook />
-        <Twitter />
-        <Google /> */}
-      </div>
-    </div>
-  );
-
-  //   ReactDOM.render(<App />, document.getElementById("container"));
-
-  function validateForm() {
-    return username.length > 0 && password.length > 0;
-  }
-
-  async function handleLogin(event) {
-    event.preventDefault();
-    if (!validateForm) alert("truong mk");
-    else {
-      const data = { username, password };
-      const Response = await EmployeeService.LoginEmployee(data).then(
-        (response) => {
-          console.log(response.data.results);
-          localStorage.setItem(
-            "token",
-            JSON.stringify(response.data.results.token)
-          );
-          localStorage.setItem(
-            "username",
-            JSON.stringify(response.data.results.user)
-          );
-          localStorage.setItem(
-            "role",
-            JSON.stringify(response.data.results.user.roleId)
-          );
-          if (JSON.parse(localStorage.getItem("role")) === "Shipper") {
-            navigate("/shipper");
-            window.location.reload();
-          }
-          if (JSON.parse(localStorage.getItem("role")) === "Admin") {
-            navigate("/");
-            window.location.reload();
-          }
-        }
+  const onSubmitLogin = async (dataForm) => {
+    var dataJson = JSON.stringify({
+      "username": dataForm.username,
+      "password": dataForm.password
+    });
+    
+    var config = {
+      
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+    };
+    console.log('ffffffffffffffffffff', dataJson)
+    axios.post(`${baseURL}/api/v1/user/login`,  dataJson, config)   
+    .then((res) =>  {
+      localStorage.setItem(
+        "token",
+        JSON.stringify(res.data.results.token)
       );
+      localStorage.setItem(
+        "username",
+        JSON.stringify(res.data.results.user)
+      );
+      localStorage.setItem(
+        "role",
+        JSON.stringify(res.data.results.user.roleId)
+      );
+      //Phan quyen Shipper
+      if (res.data.results.user.roleId === "Shipper") {
+        navigate("/shipper");
+        window.location.reload();
+      }
+      //Phan quyen Admin
+      if (res.data.results.user.roleId === "Admin") {
+        navigate("/");
+        window.location.reload();
+      }
+    })
+    .catch((err) => console.log(err))
     }
+  
+
+  const handleClick = () => {
+    setOpen(!open);
   }
 
   return (
-    <div id="loginform">
-      <FormHeader title="Đăng nhập vào hệ thống cửa hàng" />
-      <Form handleLogin={handleLogin} />
-      <OtherMethods />
-    </div>
-  );
+   
+      <section >
+        <Container>
+          <Row>
+            <Col lg='6' md='6' sm='12' className='m-auto text-center'>
+              <form className='form__login mb-5' id="form" onSubmit={handleSubmit(onSubmitLogin)}>
+                {/* <img src={logo} alt="logo" style={{ width: 200, height: 200 }} /> */}
+                <p className='welcome__title'>DOUBLET XIN CHÀO!</p>
+                <div className="form__group__login">
+                  <input
+                    type="text"
+                    placeholder="Tên đăng nhập"
+                    {...register("username", {
+                      required: 'Email is required',
+                      // pattern: {
+                      //   value: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                      //   message: 'Please enter a valid email',
+                      // },
+                    })}
+                  />
+                  {errors.username?.message && (
+                    <p style={{ color: 'red' }}>{errors.username?.message}</p>
+                  )}
+                  <img />
+                </div>
+                <div className="form__group__login">
+                  <input
+                    type='password'
+                    placeholder='Mật khẩu'
+                    {...register("password", {
+                      required: "required",
+                      minLength: {
+                        value: 6,
+                        message: "must be 6 chars",
+                      },
+                    })}
+
+                  />
+                  {errors.password ? <div style={{ color: 'red' }}>{errors.password.message}</div> : null}
+                </div>
+
+                <button
+                  onClick={handleSubmit(onSubmitLogin)}
+                  className="login__button">
+                  ĐĂNG NHẬP
+                </button>
+                
+              </form>
+              <Dialog open={open} onClose={handleClick}>
+                <Alert
+
+                //props go here
+                >
+                  <AlertTitle>Tài khoản</AlertTitle>
+                  Đăng nhập thành công!
+                </Alert>
+              </Dialog>
+
+            </Col>
+          </Row>
+        </Container>
+      </section>
+    
+  )
+
 
   //
 };

@@ -49,6 +49,7 @@ import Shipper from "./pages/Shipper/Shipper";
 import Login from "./pages/Login/Login";
 import OrderEdit from "./pages/Oders/OrderEdit";
 import ShipperEdit from "./pages/Shipper/ShipperEdit";
+import Chatbox from "./pages/Chatbox/Chatbox";
 
 const App = () => {
   const {
@@ -130,6 +131,7 @@ const App = () => {
                 <Route path="/products/new" element={<ProductNew />} />{" "}
                 <Route path="/products/edit/:id" element={<ProductEdit />} />{" "}
                 <Route path="/productTypes" element={<ProductTypes />} />{" "}
+                <Route path="/chatbox" element={<Chatbox />} />{" "}
                 <Route path="/productTypes/new" element={<ProductTypeNew />} />{" "}
                 <Route
                   path="/productTypes/edit/:id"

@@ -1,0 +1,107 @@
+.new__product {
+    background-color: #c89090;
+    border-radius: 5px;
+    width: 1200px;
+}
+
+.info__product {
+    display: flex;
+    flex-direction: row;
+    border-radius: 5px;
+}
+
+.info__product-list {
+    background-color: rgb(255, 255, 255);
+    width: 900px;
+    height: 600px;
+}
+.info__product-list p {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 20px;
+}
+.info_product-item{
+    display: flex;
+    flex-direction: row;
+    margin-top: 20px;
+    align-items: center;
+}
+.info_product-item label{
+    font-weight: bold;
+    margin-left: 10px;
+    width: 100px;
+}
+.info_product-item input {
+    border-radius: 5px;
+    height: 50px;
+    width: 700px;
+    margin-right: 10px;
+    margin-left: 20px;
+    border: rgb(225, 219, 219) solid 0.1px;
+}
+.product__image {
+    background-color: rgb(255, 255, 255);
+    width: 300px;
+    height: 600px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.product__button {
+    background-color: rgb(255, 255, 255);
+    width: 1200px;
+    height: 50px;
+    display: flex;
+    justify-content: flex-end;
+}
+.product__image-detail {
+    margin-top: 20px;
+    height: 200px;
+    width: 200px;
+    border-radius: 5px;
+}
+.upload__button{
+    background-color: #161515;
+    color: white;
+    height: 3rem;
+    width: 6rem;
+    margin: 0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    border-radius: 5%;
+  }
+  .input__file{
+    width: inherit;
+    height: inherit;
+    opacity:0;
+    overflow: hidden;
+    position: absolute;
+    z-index: 10;
+  }
+  .upload__button :hover{
+    cursor: pointer;
+  }
+  .info__new-address {
+    display: flex;
+    margin-top: 30px;
+    align-items: center;
+  }
+  .info__new-address label {
+    width: 180px;
+  }
+  .info__new-address input {
+    border-radius: 10px;
+    padding: 10px 20px;
+    width: 700px;
+    margin-left: 20px;
+  }
+  .saveaddress__button {
+    margin-top: 20px;
+  }
+  .saveaddress__button button {
+    border-radius: 8px;
+    padding: 8px 12px;
+  }

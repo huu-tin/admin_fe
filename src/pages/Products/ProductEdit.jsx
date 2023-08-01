@@ -291,14 +291,7 @@ const ProductEdit = () => {
                                   defaultValue={data.image}
                                 />
                               </label> */}
-                              <textarea
-                                id="image"
-                                name="image"
-                                rows={3}
-                                className="image mt-1 w-full border rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
-                                placeholder="Nhập link hình ảnh"
-                                defaultValue={data.image}
-                              />
+                              <img src={data.image?.[0]}/> 
                               {/* {data.image &&
                                 data.image.map((item) => {
                                   <img

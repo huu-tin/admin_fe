@@ -16,10 +16,28 @@ const ModalAdd = ({ open, onClose }) => {
   }, []);
   const fetchData = async () => {
     await ProductService.getAllProduct().then((response) => {
-      setData(response);
+      setData(response.results.data);
     });
   };
+  // var myHeaders = new Headers();
+  // myHeaders.append("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJMb25nIEx1b25nIEx1b25nIiwidWlkIjoiMDFHSFRNN0NGMks3UzlaNVM5NVlIUlA2SFAiLCJpYXQiOjE2Njg2ODgyMjYyNTYsImV4cCI6MTY2ODk0NzQyNjI1Nn0.2zz4BRcFMdB2uA5LQHy0g-CdzQTLLOa6v88ZmxEyUmw");
 
+  // var requestOptions = {
+  //   method: 'GET',
+  //   headers: myHeaders,
+  //   redirect: 'follow'
+  // };
+
+  // fetch("http://localhost:3000/api/v1/product", requestOptions)
+  //   .then(response => response.text())
+  //   .then(result => {
+      
+  //   const t = JSON.parse(result)
+    
+  //   setData(t.results.data);
+  //   })
+  //   .catch(error => console.log('error', error));
+// console.log("prdata",data);
   const onSaveClick = async (e) => {
     e.preventDefault();
     if (

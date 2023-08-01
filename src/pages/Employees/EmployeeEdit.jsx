@@ -23,7 +23,6 @@ const EmployeeEdit = () => {
   const onSave = async () => {
     const employee = {
       username: document.getElementById("username").value,
-      password: document.getElementById("password").value,
       email: document.getElementById("email").value,
       phone: document.getElementById("phone").value,
       status: true,
@@ -73,16 +72,7 @@ const EmployeeEdit = () => {
                                 placeholder="Nhập tài khoản"
                                 defaultValue={data.username}
                               />
-                              <h1 className="font-bold mb-1">Password</h1>
-                              <input
-                                id="password"
-                                name="password"
-                                type="password"
-                                rows={1}
-                                className="mt-1 w-full border rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
-                                placeholder="Nhập password"
-                                defaultValue={data.password}
-                              />
+                              
                               <h1 className="font-bold mb-1">Email</h1>
 
                               <textarea

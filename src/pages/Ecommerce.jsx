@@ -6,7 +6,20 @@ import { DropDownListComponent } from "@syncfusion/ej2-react-dropdowns";
 import { MdAssignment, MdCheckCircleOutline, MdCheckCircle, MdLocalCarWash, MdElectricMoped, MdAssignmentTurnedIn } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { Chart } from "react-google-charts";
-
+import {
+  GridComponent,
+  ColumnsDirective,
+  ColumnDirective,
+  Resize,
+  Sort,
+  ContextMenu,
+  Filter,
+  Page,
+  ExcelExport,
+  PdfExport,
+  Edit,
+  Inject,
+} from "@syncfusion/ej2-react-grids";
 import { Stacked, Pie, Button, LineChart, SparkLine } from "../components";
 import {
   medicalproBranding,
@@ -42,18 +55,18 @@ const DropDown = ({ currentMode }) => (
 
 const Ecommerce = () => {
 
-  
-  
+
+
   //-----------------------------------------------
   const navigate = useNavigate();
   const { currentColor, currentMode } = useStateContext();
-  
+
   // const [startDate, setStartDate] = useState('');
   // const [endDate, setEndDate] = useState('');
 
   // console.log('type of start date: ', typeof startDate, startDate)
   // console.log('type of end date: ', typeof endDate, endDate)
-
+  
   const [data, setData] = useState([])
   const orderQuantityToday = data?.orderInDate?.newOrder
   useEffect(() => {
@@ -123,6 +136,7 @@ const Ecommerce = () => {
       pcColor: "red-600",
     },
   ];
+ 
   const earningData1 = [
     {
       icon: <MdAssignment />,
@@ -157,7 +171,7 @@ const Ecommerce = () => {
 
       pcColor: "green-600",
     },
-    
+
   ];
   // pie chart children props
   const dataChart = [
@@ -170,26 +184,60 @@ const Ecommerce = () => {
     ["Hoàn thành", data?.statusOrder?.completed],
   ];
   // console.log('Type of data: ',typeof data?.statusOrder?.completed)
-  
+
   const optionsChart = {
     title: `Tổng số đơn hàng: ${data?.statusOrder?.numberOrder}`,
   };
+  
+  const productGrid = [
+// {
+//       headerText: "Sản phẩm",
+//       field: "image",
+      
+//       textAlign: "Center",
+//       width: "100",
+      
+//     },
+    {
+      headerText: "Sản phẩm",
+      field: "name",
+      textAlign: "Center",
+      width: "100",
+      
+    },
+    
+    {
+      headerText: "Số lượng bán ra",
+      field: "numberProducts",
+      textAlign: "Center",
+      width: "50",
+    },
+
+    {
+      field: "numberOrders",
+      headerText: "Số lượng đơn hàng",
+      textAlign: "Center",
+      width: "50",
+    }
+  ];
   //--------------------------------
   return (
     <div className="mt-24">
       <div className="flex flex-wrap lg:flex-nowrap justify-center ">
-        <div className="bg-white dark:text-gray-200 dark:bg-secondary-dark-bg h-44 rounded-xl w-full lg:w-80 p-8 pt-9 m-3 bg-hero-pattern bg-no-repeat bg-cover bg-center">
-          <div className="flex justify-between items-center">
-
+        <div className="bg-white dark:text-gray-200 dark:bg-secondary-dark-bg h-44 rounded-xl w-full lg:w-80 p-8 pt-9 m-3 bg-hero-pattern bg-no-repeat bg-cover bg-center"
+          style={{ display: "flex", flexDirection: 'column' }}>
+          <div className="flex justify-between items-center" style={{display: 'flex', justifyContent: 'center'}}>
             <div>
-              <p className="font-bold text-gray-400">Tổng doanh thu</p>
-              <p className="text-2xl">{data.totalAmount} VNĐ</p>
+              <p className="font-bold text-gray-400">TỔNG DANH THU</p>
+              <p className="text-3xl font-semibold" style={{marginBottom: 20}}>{data.totalAmount} VNĐ</p>
+              <p className="font-bold text-gray-400">TỔNG SỐ ĐƠN HÀNG</p>
+              <p className="text-3xl font-semibold">{data?.statusOrder?.numberOrder}</p>
+
               {/* <input className="date__Start" type="date" onChange={(e) => setStartDate(e.target.value)}/>
               <input className="date__End" type="date" onChange={(e) => setEndDate(e.target.value)}/> */}
             </div>
-
           </div>
-          <div className="mt-6">
+          <div className="mt-6" style={{display: 'flex', justifyContent: 'center'}}>
             <button onClick={() => navigate('/orders')}>
               <Button
                 color="white"
@@ -201,7 +249,8 @@ const Ecommerce = () => {
             </button>
           </div>
         </div>
-        <div className="flex m-3 flex-wrap justify-center gap-1 items-center">
+
+        <div className="flex m-3 flex-wrap justify-center gap-1 items-center" style={{width: 800}}>
 
           {earningData.map((item) => (
             <div
@@ -244,6 +293,7 @@ const Ecommerce = () => {
               width={"100%"}
               height={"400px"}
             />
+           
           </div>
         </div>
       </div>
@@ -255,11 +305,11 @@ const Ecommerce = () => {
             <div>
               <p className="font-bold text-gray-400">Đơn hàng trong hôm nay</p>
               <p className="text-2xl">{orderQuantityToday}</p>
-              
+
             </div>
 
           </div>
-          
+
         </div>
         <div className="flex m-3 flex-wrap justify-center gap-1 items-center">
 
@@ -285,23 +335,53 @@ const Ecommerce = () => {
             </div>
           ))}
           {/* <div className="bg-white dark:text-gray-200 dark:bg-secondary-dark-bg rounded-2xl md:w-400 p-8 m-3 flex justify-center items-center gap-10"> */}
-          
+
         </div>
       </div>
       {/* ------------------------------- */}
 
+      <div id="grid-data" style={{display: 'flex', justifyContent: 'center'}}>
+          <GridComponent
+            id="gridcomp"
+            dataSource={data?.topProduct}
+            allowPaging
+            allowSorting
+            pageSettings={{ pageSize: 10 }}
+            width={1000}
+            
+            
+          >
+            <ColumnsDirective>
+              {productGrid.map((item, index) => (
+                <ColumnDirective key={index} {...item} />
+              ))}
+            </ColumnsDirective>
+            <Inject
+              services={[
+                Resize,
+                Sort,
+                ContextMenu,
+                Filter,
+                Page,
+                ExcelExport,
+                Edit,
+                PdfExport,
+              ]}
+            />
+          </GridComponent>
+        </div>
       <div className="flex gap-10 flex-wrap justify-center">
         <div className="bg-white dark:text-gray-200 dark:bg-secondary-dark-bg m-3 p-4 rounded-2xl md:w-780  ">
-          <div className="flex justify-between">
-            <p className="font-semibold text-xl">Top sản phẩm</p>
-            <div className="flex justify-between">
-              <p className="font-semibold text-xl">Tổng số đơn hàng</p>
+          {/* <div className="flex justify-between" style={{display: 'flex', justifyContent: 'space-between'}}>
+            <p className="font-semibold text-xl" >Top sản phẩm</p>
+            <div className="flex justify-between" style={{marginLeft: 100}}>
+              <p className="font-semibold text-xl" style={{marginLeft: 100}}>Tổng số đơn hàng</p>
               <p className="font-semibold text-xl">Số lượng đã bán</p>
             </div>
-          </div>
+          </div> */}
           {/* <div className="mt-10 w-72 md:w-400"> */}
 
-          {data?.topProduct?.map((item) => (
+          {/* {data?.topProduct?.map((item) => (
             <div key={item.uid} className="flex justify-between mt-4">
               <div className="flex gap-4">
                 <button
@@ -309,16 +389,16 @@ const Ecommerce = () => {
                 >
                   <MdAssignment />
                 </button>
-                
+
                 <div>
-                  <p className="text-md font-semibold">{item?.uid}</p>
-                  
+                  <p className="text-md font-semibold">{item?.name}</p>
+
                 </div>
               </div>
               <p className={`text-${item.pcColor}`}>{item?.numberOrders}</p>
               <p className={`text-${item.pcColor}`}>{item?.numberProducts}</p>
             </div>
-          ))}
+          ))} */}
 
 
 
@@ -327,7 +407,7 @@ const Ecommerce = () => {
 
           <div className="mt-10 flex gap-10 flex-wrap justify-center">
             <div className=" border-r-1 border-color m-4 pr-10">
-              <div>
+              {/* <div>
                 <p>
                   <span className="text-3xl font-semibold">{data.totalAmount}</span>
                   <span className="p-1.5 hover:drop-shadow-xl cursor-pointer rounded-full text-white bg-green-400 ml-3 text-xs">
@@ -340,7 +420,7 @@ const Ecommerce = () => {
                 <p className="text-3xl font-semibold">{data?.statusOrder?.numberOrder}</p>
 
                 <p className="text-gray-500 mt-1">Tổng số đơn hàng</p>
-              </div>
+              </div> */}
 
               {/* <div className="mt-5">
                 <SparkLine
@@ -353,17 +433,17 @@ const Ecommerce = () => {
                   color={currentColor}
                 />
               </div> */}
-              
+
             </div>
             {/* <div>
               <Stacked currentMode={currentMode} width="320px" height="360px" />
             </div> */}
           </div>
         </div>
-        
+
       </div>
 
-      
+
     </div>
   );
 };

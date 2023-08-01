@@ -229,49 +229,28 @@ const ShipperEdit = () => {
                               {data.product &&
                                 data.product.map((item) => {
                                   return (
-                                    <div key={item._id}>
-                                      <input value={item._id} type="hidden" />
-                                      <h1 className="font-bold mb-1">
-                                        Mã sản phẩm
-                                      </h1>
-                                      <textarea
-                                        id="productId"
-                                        name="productId"
-                                        disabled
-                                        rows={1}
-                                        className="mt-1 w-full border rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
-                                        placeholder="Mã sản phẩm"
-                                        defaultValue={item.productId}
-                                      />
-
-                                      <h1 className="font-bold mb-1">
-                                        Số lượng
-                                      </h1>
-                                      <textarea
-                                        id="number"
-                                        name="number"
-                                        disabled
-                                        rows={1}
-                                        className="mt-1 w-full border rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
-                                        placeholder="Số lượng"
-                                        defaultValue={item.number}
-                                      />
-                                      <h1 className="font-bold mb-1">
-                                        Gía tiền
-                                      </h1>
-                                      <textarea
-                                        id="price"
-                                        name="price"
-                                        disabled
-                                        rows={1}
-                                        className="mt-1 w-full border rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
-                                        placeholder="Gía tiền"
-                                        defaultValue={item.price}
+                                    <div key={item._id} style={{ display: 'flex', flexDirection: 'row', marginBottom: 20 }}>
+                                    <input value={item._id} type="hidden" />
+                                    <div >
+                                      <img
+                                        src={item.image}
+                                        style={{
+                                          width: 200,
+                                          height: 200
+                                        }}
                                       />
                                     </div>
+                                    <div className="product__info">
+                                      <p>Tên sản phẩm: {item.name}</p>
+                                      <p>Số lượng: {item.number}</p>
+                                      <p>Giá: {item.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}đ</p>
+                                    </div>
+
+                                  </div>
                                   );
                                 })}
-                              <h1 className="font-bold mb-1">Địa chỉ</h1>
+                                 <h1 className="totalbill">Tổng đơn hàng: {data.totalAmount?.total.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}đ</h1>
+                              <h1 className="font-bold mb-1">THÔNG TIN LIÊN LẠC</h1>
                               <h1 className="font-bold mb-1">Đường</h1>
                               <textarea
                                 id="street"
@@ -354,19 +333,8 @@ const ShipperEdit = () => {
                                 placeholder="Nhập email"
                                 defaultValue={data.email}
                               />
-                              <h1 className="font-bold mb-1">Hóa đơn</h1>
-                              <h1 className="font-bold mb-1">Tổng giá</h1>
-
-                              <textarea
-                                id="total"
-                                name="total"
-                                disabled
-                                rows={1}
-                                className="mt-1 w-full border rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
-                                placeholder="Nhập tổng giá đơn hàng"
-                                defaultValue={data.totalAmount?.total}
-                              />
-                              <h1 className="font-bold mb-1">Đã được giảm</h1>
+                              
+                              {/* <h1 className="font-bold mb-1">Đã được giảm</h1>
                               <textarea
                                 id="discount"
                                 name="discount"
@@ -375,13 +343,13 @@ const ShipperEdit = () => {
                                 className="mt-1 w-full border rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2"
                                 placeholder="Đã được giảm"
                                 defaultValue={data.totalAmount?.discount}
-                              />
+                              /> */}
 
-                              <h1 className="font-bold mb-1">
+                              {/* <h1 className="font-bold mb-1">
                                 Shipper được chọn
-                              </h1>
+                              </h1> */}
 
-                              <select
+                              {/* <select
                                 id="shipperId"
                                 name="shipperId"
                                 disabled
@@ -400,7 +368,7 @@ const ShipperEdit = () => {
                                     </option>
                                   );
                                 })}
-                              </select>
+                              </select> */}
 
                               {/* <h1 className="font-bold mb-1">Thực thu</h1>
                               <textarea
@@ -463,13 +431,12 @@ const ShipperEdit = () => {
                           Quay lại
                         </Link>
                         <button
+                          style={{backgroundColor: data.status == 'Đang chờ giao' ? '' : 'grey'}}
                           type="button"
                           disabled={
-                            data.status === "Đã xác nhận" ||
-                            data.status === "Đang giao hàng" ||
-                            data.status === "Đã hủy đơn" ||
-                            data.status === "Chưa xác nhận" ||
-                            data.status === "Hoàn tất"
+                            data.status == 'Đang chờ giao' ?
+                            false:
+                            true      
                           }
                           onClick={Transport}
                           className="inline-flex justify-center rounded-md border border-transparent bg-sky-500 py-3 px-8 text-sm font-medium text-white shadow-sm hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
@@ -491,18 +458,17 @@ const ShipperEdit = () => {
                         </button> */}
 
                         <button
+                          style={{backgroundColor: data.status == 'Đang giao hàng' ? '' : 'grey'}}
                           type="button"
                           disabled={
-                            data.status === "Đang chờ giao" ||
-                            data.status === "Chưa xác nhận" ||
-                            data.status === "Đã xác nhận" ||
-                            data.status === "Đã hủy đơn" ||
-                            data.status === "Hoàn tất"
+                            data.status == 'Đang giao hàng' ?
+                            false:
+                            true      
                           }
                           className="inline-flex justify-center rounded-md border border-transparent bg-sky-500 py-3 px-8 text-sm font-medium text-white shadow-sm hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                           onClick={Complete}
                         >
-                          Giao hàng
+                          Giao thành công!
                         </button>
                       </div>
                     </div>

@@ -34,3 +34,27 @@ span {
     color: #888;
     margin-left: 14px;
 }
+.status__content{
+    background-color: rgb(243, 245, 247);
+    padding: 2px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-right: 10px;
+    margin-bottom: 5px;
+    margin-top: 20px;
+  }
+  .status__content p {
+    margin: auto;
+    font-weight: bold;
+    
+  }
+  .status__tab-active{
+    background-color: #efd8f0;
+    padding: 4px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  .status__tab-active p {
+    margin: auto;
+    font-weight: bold;
+  }
